@@ -11,7 +11,7 @@ export PATH="$PATH:$HOME/Documents/electron-core/electron-gn-scripts/nix:"
 
 #  Git Command Prompt Settings
 source ~/.git-prompt.sh
-source ~/.git-completion.bash
+source ~/.git-completion.sh
 
 export GIT_PS1_SHOWDIRTYSTATE=true
 export GIT_PS1_SHOWUNTRACKEDFILES=true
