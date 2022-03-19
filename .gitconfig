@@ -1,0 +1,194 @@
+[user]
+	{redeacted}
+
+[core]
+	editor = /usr/bin/vim
+  # 	editor = code --wait
+	precomposeUnicode = true
+	autocrlf = false
+	filemode = false
+	whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol, space-before-tab
+	longpaths = true
+
+[oh-my-zsh]
+	hide-dirty = 1
+
+[http]
+	cookiefile = /Users/keeleyhammond/.gitcookies
+	postBuffer = 524288000
+
+[merge]
+	conflictstyle = diff3
+
+[web]
+	browser = google-chrome
+
+[rerere]
+	enabled = 1
+	autoupdate = 1
+
+[rebase]
+  autosquash = true
+
+[push]
+	default = simple
+
+[color]
+	ui = auto
+
+[help]
+	autocorrect = 1
+
+[color "branch"]
+	current = yellow bold
+	local = green bold
+	remote = cyan bold
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+
+[color "status"]
+	added = green bold
+	changed = yellow bold
+	untracked = red bold
+
+[alias]
+	#############
+	aliases = config --get-regexp alias
+	a = add --all
+	ai = add -i
+	#############
+	ap = apply
+	as = apply --stat
+	ac = apply --check
+	#############
+	ama = am --abort
+	amc = am --continue
+	amr = am --resolved
+	ams = am --skip
+	#############
+	b = branch
+	bm = "!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'"
+	ba = branch -a
+	bd = branch -D
+	br = branch -r
+	bv = branch -v
+	#############
+	c = commit
+	ca = commit --amend
+	cm = commit -m
+	cam = commit -am
+	can = commit --amend --no-edit
+	#############
+	cp = cherry-pick
+	cpa = cherry-pick --abort
+	cpc = cherry-pick --continue
+	#############
+	d = diff
+	ds = diff --staged
+	dm = "!git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
+	#############
+	f = fetch
+	fo = fetch origin
+	fu = fetch upstream
+	fp = format-patch
+	#############
+	g = grep -p
+	gfb = get-fork-branch # custom (see git-fns)
+	#############
+	plog = log --graph --pretty='format:%C(red)%d%C(reset) %C(yellow)%h%C(reset) %ar %C(green)%aN%C(reset) %s'
+  	tlog = log --stat --since='1 Day Ago' --graph --pretty=oneline --abbrev-commit --date=relative
+	lo = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	#############
+	m = merge
+	ma = merge --abort
+	mc = merge --continue
+	ms = merge --skip
+	#############
+	co = checkout
+	cob = checkout -b
+	com = !sh -c  '([[ "$(git branch --list main)" ]] && git checkout main) || git checkout master'
+	co-pr = "!f() { git fetch origin pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+	#############
+	clo = clone
+	#############
+	pa = patch-apply # custom (see git-fns)
+	pit = "!f() { echo $1 | sed s_pull/[1-9]*/commits_commit_ | xargs curl -L | git am -3 --whitespace=fix; }; f"
+	pr = prune -v
+	#############
+	po = patch-out # custom (see git-fns)
+	ps = push
+	psf = push --force-with-lease
+	psu = push upstream
+	pso = push origin
+	psao = push --all origin
+	psfo = push --force-with-lease origin
+	psfu = push --force-with-lease upstream
+	psuo = push -u origin
+	psom = push origin master
+	psuom = push -u origin master
+	#############
+	pl = pull
+	plu = pull -u
+	plo = pull origin
+	plp = pull upstream
+	plom = pull origin master
+	#############
+	pb = pull --rebase
+	pba = pull --rebase --autostash
+	pbo = pull --rebase origin
+	pbu = pull --rebase upstream
+	pbom = pull --rebase origin master
+	pbum = pull --rebase upstream master
+	#############
+	rb = rebase
+	rba = rebase --abort
+	rbc = rebase --continue
+	rbi = rebase --interactive
+	rbs = rebase --skip
+	#############
+	re = reset
+	rh = reset HEAD
+	reh = reset --hard
+	res = reset --soft
+	rehh = reset --hard HEAD
+	resh = reset --soft HEAD
+	#############
+	r = remote
+	ra = remote add
+	rr = remote rm
+	rv = remote -v
+	rm = remote rename
+	rs = remote show
+	rao = remote add origin
+	rso = remote show origin
+	#############
+	rev = revert
+	rva = revert --abort
+	rvc = revert --continue
+	rvs = revert --skip
+	rvq = revert --quit
+	#############
+	s = status
+	sb = status -sb
+	sh = show
+	st = stash
+	sa = stash apply
+	sp = stash pop
+	#############
+	wkl = worktree list
+	wka = worktree add
+wh
+
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+
+[init]
+	defaultBranch = main
