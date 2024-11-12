@@ -1,5 +1,6 @@
 [user]
-	{redeacted}
+	name = Keeley Hammond
+	email = vertedinde@electronjs.org
 
 [core]
 	editor = /usr/bin/vim
@@ -19,9 +20,6 @@
 
 [merge]
 	conflictstyle = diff3
-
-[web]
-	browser = google-chrome
 
 [rerere]
 	enabled = 1
@@ -80,6 +78,7 @@
 	#############
 	c = commit
 	ca = commit --amend
+	cf = commit --fixup
 	cm = commit -m
 	cam = commit -am
 	can = commit --amend --no-edit
@@ -98,58 +97,57 @@
 	fp = format-patch
 	#############
 	g = grep -p
-	gfb = get-fork-branch # custom (see git-fns)
 	#############
 	plog = log --graph --pretty='format:%C(red)%d%C(reset) %C(yellow)%h%C(reset) %ar %C(green)%aN%C(reset) %s'
-  	tlog = log --stat --since='1 Day Ago' --graph --pretty=oneline --abbrev-commit --date=relative
+	tlog = log --stat --since='1 Day Ago' --graph --pretty=oneline --abbrev-commit --date=relative
 	lo = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 	#############
 	m = merge
 	ma = merge --abort
 	mc = merge --continue
 	ms = merge --skip
-	#############
+	#############q
 	co = checkout
 	cob = checkout -b
-	com = !sh -c  '([[ "$(git branch --list main)" ]] && git checkout main) || git checkout master'
-	co-pr = "!f() { git fetch origin pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+	main-branch = "!git symbolic-ref refs/remotes/origin/HEAD | cut -d'/' -f4"
+	com = "!f(){ git checkout $(git main-branch) $@;}; f"
 	#############
 	clo = clone
 	#############
-	pa = patch-apply # custom (see git-fns)
 	pit = "!f() { echo $1 | sed s_pull/[1-9]*/commits_commit_ | xargs curl -L | git am -3 --whitespace=fix; }; f"
 	pr = prune -v
 	#############
-	po = patch-out # custom (see git-fns)
 	ps = push
 	psf = push --force-with-lease
+	pushfwl = push --force-with-lease --force-if-includes
 	psu = push upstream
 	pso = push origin
 	psao = push --all origin
 	psfo = push --force-with-lease origin
 	psfu = push --force-with-lease upstream
 	psuo = push -u origin
-	psom = push origin master
-	psuom = push -u origin master
+	psom = "!f() { git push origin $(git main-branch); }; f"
+	psuom = "!f() { git push -u origin $(git main-branch); }; f"
 	#############
 	pl = pull
 	plu = pull -u
 	plo = pull origin
 	plp = pull upstream
-	plom = pull origin master
+	plom = "!f() { git pull origin $(git main-branch) }; f"
 	#############
 	pb = pull --rebase
 	pba = pull --rebase --autostash
 	pbo = pull --rebase origin
 	pbu = pull --rebase upstream
-	pbom = pull --rebase origin master
-	pbum = pull --rebase upstream master
+	pbom = "!f() { git pull --rebase origin $(git main-branch); }; f"
+	pbum = "!f() { git pull --rebase upstream $(git main-branch); }; f"
 	#############
 	rb = rebase
 	rba = rebase --abort
 	rbc = rebase --continue
 	rbi = rebase --interactive
 	rbs = rebase --skip
+	rbia = rebase --interactive --autosquash
 	#############
 	re = reset
 	rh = reset HEAD
@@ -179,10 +177,15 @@
 	st = stash
 	sa = stash apply
 	sp = stash pop
-	#############
-	wkl = worktree list
-	wka = worktree add
-wh
+
+[gpg]
+	format = ssh
+
+[commit]
+	gpgSign = true
+
+[tag]
+	gpgSign = true
 
 [filter "lfs"]
 	required = true
