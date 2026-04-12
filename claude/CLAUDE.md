@@ -20,6 +20,19 @@ When I hand you a reported vulnerability to fix, keep commit messages, branch na
 
 Backport labels for security fixes normally include the **oldest** active release line in addition to the default bug-fix set; confirm with me before applying `target/<oldest>-x-y` since the label itself can signal severity.
 
+## Dotfiles: the repo is public
+
+`~/dev/dotfiles` (remote: `VerteDinde/dotfiles`) is a **public** GitHub repo. Anything committed there becomes world-readable and archived forever — treat commits into this repo the way you'd treat a press release.
+
+Never auto-stage any of the following into the dotfiles repo, even when asked to "sync `~/.claude`":
+
+- `~/.claude/projects/*/memory/` (MEMORY.md, feedback/project/reference notes)
+- `~/.claude/history.jsonl`, `sessions/`, `paste-cache/`, `projects/*/`
+- Project-specific `CLAUDE.md` files that might contain non-public detail
+- Anything mentioning unreleased security work, internal infrastructure, private team context, or un-shipped changes
+
+What *is* fine to sync: generic personal skills, portable hook scripts, this global `CLAUDE.md`, and the global `settings.json`. If I ask to sync anything from the disallowed list above, propose a selective review rather than a bulk copy.
+
 ## Dotfiles layout reference
 
 ```
