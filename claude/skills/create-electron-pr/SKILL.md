@@ -10,8 +10,12 @@ Use this skill whenever you're about to run `gh pr create` in an `electron/elect
 ## Before you start
 
 1. **Never push or open a PR without explicit go-ahead from Keeley.** She wants to build and test locally first. This rule holds even when the work looks "done." Ask.
-2. Confirm the branch is pushed (`git push -u origin <branch>`), that the diff matches what you expect, and that any relevant spec tests have been run.
-3. Read the project `CLAUDE.md` at `~/dev/electron/src/electron/CLAUDE.md` — it has authoritative PR, labeling, and backport rules. This skill layers Keeley's personal preferences on top; when in doubt, the project `CLAUDE.md` wins.
+2. **Linting must pass.** Run `yarn lint` (or the relevant subset: `yarn lint:js`, `yarn lint:clang-format`, `yarn lint:api-history`). Don't open a PR with lint failures.
+3. **Bug fixes and features must include tests.** The PR guide says "Bug fixes and features should always come with tests." If the PR adds or fixes behavior and there's no test, flag that to Keeley before opening.
+4. **If the PR adds or changes an API**, update the relevant `docs/api/*.md` file with an API history YAML block (see `docs/CLAUDE.md` for format) and run `yarn lint:api-history`.
+5. Rebase onto `main` before pushing: `git fetch origin && git rebase origin/main`. This is explicitly called out in the PR guide.
+6. Confirm the branch is pushed (`git push -u origin <branch>`) and the diff matches what you expect.
+7. Read the project `CLAUDE.md` at `~/dev/electron/src/electron/CLAUDE.md` — it has authoritative PR, labeling, and backport rules. This skill layers Keeley's personal preferences on top; when in doubt, the project `CLAUDE.md` wins.
 
 ## Template (required — PRs without it are auto-closed)
 
@@ -27,8 +31,11 @@ Describe the change from the reader's perspective, not your thought process.>
 
 - [x] PR description included
 - [x] I have built and tested this PR
-- [x] `npm test` passes
-<Remove any checklist items that don't apply. Use [x] only for ones that are true.>
+- [x] `yarn test` passes
+- [x] tests are [changed or added](https://github.com/electron/electron/blob/main/docs/development/testing.md)
+- [x] relevant API documentation, tutorials, and examples are updated and follow the [documentation style guide](https://github.com/electron/electron/blob/main/docs/development/style-guide.md)
+- [x] [PR release notes](https://github.com/electron/clerk/blob/main/README.md) describe the change in a way relevant to app developers, and are [capitalized, punctuated, and past tense](https://github.com/electron/clerk/blob/main/README.md#examples).
+<Remove items that don't apply. Use [x] only for ones that are actually true.>
 
 #### Release Notes
 
@@ -94,25 +101,30 @@ The `Notes:` line should also be generic — e.g. `Notes: Fixed an issue where X
 
 ## Title conventions
 
-- Short — under 70 characters. Details go in the body.
-- Conventional-commit prefix matching recent history: `fix:`, `feat:`, `refactor:`, `chore:`, `perf:`, `docs:`, `test:`, `build:`, `ci:`. Check `git log --oneline -10` to match style.
-- Lowercase after the colon unless the first word is a proper noun (class name, API name).
+- **Length**: preferably 50 characters or less, no more than 72 characters. Details go in the body.
+- **Semantic prefix** (required — PR cannot merge without one): `fix:`, `feat:`, `docs:`, `test:`, `build:`, `ci:`, `perf:`, `refactor:`, `style:`. Check `git log --oneline -10` to match recent history.
+- **Case**: entirely lowercase after the colon, except for proper nouns, acronyms, and words that refer to code (function/variable names).
 - Don't repeat the prefix in the body's first line.
+- **Breaking changes**: if the PR introduces an incompatible API change, add `BREAKING CHANGE:` at the beginning of the commit body or footer section (per [conventional commits](https://conventionalcommits.org)). This can accompany any prefix type.
+- **Squash on landing**: multiple commits in a PR get squashed when merged, so the PR title becomes the final commit message. Make it count.
 
 ## Workflow (paste-friendly)
 
 ```bash
 # 0. Confirm Keeley has green-lit the push.
-# 1. Make sure the branch is up to date:
-git status
+
+# 1. Rebase onto main:
+git fetch origin && git rebase origin/main
+
+# 2. Push the branch:
 git push -u origin "$(git rev-parse --abbrev-ref HEAD)"
 
-# 2. Gather label info:
+# 3. Gather label info:
 gh label list --repo electron/electron --search target/ \
   --json name,color \
   --jq '.[] | select(.color == "ad244f") | .name'
 
-# 3. Open the PR with template-correct body:
+# 4. Open the PR with template-correct body:
 gh pr create \
   --title "fix: ..." \
   --label "semver/patch" \
@@ -126,7 +138,10 @@ gh pr create \
 
 - [x] PR description included
 - [x] I have built and tested this PR
-- [x] `npm test` passes
+- [x] `yarn test` passes
+- [x] tests are [changed or added](https://github.com/electron/electron/blob/main/docs/development/testing.md)
+- [x] relevant API documentation, tutorials, and examples are updated and follow the [documentation style guide](https://github.com/electron/electron/blob/main/docs/development/style-guide.md)
+- [x] [PR release notes](https://github.com/electron/clerk/blob/main/README.md) describe the change in a way relevant to app developers, and are [capitalized, punctuated, and past tense](https://github.com/electron/clerk/blob/main/README.md#examples).
 
 #### Release Notes
 
@@ -138,9 +153,13 @@ EOF
 ## Common mistakes to not repeat
 
 - Forgetting the `#### Description of Change` / `#### Checklist` / `#### Release Notes` section headers — the template check will fail and the PR may be auto-closed.
+- **Omitting checklist items from the template.** Include all 6 items from the template; remove only the ones that genuinely don't apply (e.g., "tests are changed or added" when the PR is docs-only). Don't silently drop items.
 - Putting the `Notes:` line anywhere other than the last line of the body.
 - Writing a PR summary in conversation style ("So I was looking at this and...") instead of describing the finished change.
-- Marking checklist items `[x]` that aren't actually true (e.g., "`npm test` passes" when you haven't run it).
+- Marking checklist items `[x]` that aren't actually true (e.g., "`yarn test` passes" when you haven't run it).
+- **Opening a bug fix or feature PR without tests.** The project requires them — flag the gap to Keeley if unsure what to test.
+- **Forgetting API history blocks** when adding or changing a public API. The `docs/api/*.md` files need a YAML history block (see `docs/CLAUDE.md`), and `yarn lint:api-history` must pass.
 - Revealing exploit mechanics in security-fix PRs.
 - Adding backport labels without checking which release lines are currently active.
+- **Skipping rebase** — the PR guide explicitly requires rebasing onto `origin/main` before pushing.
 - Running `gh pr create` before Keeley has said "go ahead" — confirm first, always.
